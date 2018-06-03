@@ -13,5 +13,5 @@ It can contain as many altcoins as you want.
 start.sh is an bash file that will excute the python code in te background.
 
 
-                                                            Indevelopment
+                                                          Indevelopment
 Currently working with gmail api so that the script can email or text you when the a certain coin reaches its selling point.
