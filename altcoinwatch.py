@@ -32,46 +32,59 @@ def main(image):
 def notifier():
         n = []
         p = []
-# add the path to the text file containing the alticoin symbols and sell point
-        with open('', 'r') as file:
-            m = file.read()
-            m = m.split('\n')
-            file.close()
-        num = len(m) / 2
-        num2 = len(m)
-        y = 0
-        while y < num2:
-            if y % 2 == 0:
-                n.append(m[y].upper())
-            y = y + 1
-        y = 0
-        while y < num2:
-            if y % 2 != 0:
-                p.append(m[y])
-            y = y + 1
+        try:
+            # add the path to the text file containing the alticoin symbols and sell point
+	    with open('', 'r') as file:
+                m = file.read()
+                m = m.split('\n')
+                file.close()
+                num = len(m) / 2
+                num2 = len(m)
+                y = 0
+                while y < num2:
+                    if y % 2 == 0:
+                        n.append(m[y].upper())
+                    y = y + 1
+                y = 0
+                while y < num2:
+                    if y % 2 != 0:
+                        p.append(m[y])
+                    y = y + 1
+        except:
+            os.system('notify-send ' + 'Error no crypt.txt file')
+            os.system('spd-say "Error no text file exiting"')
+            time.sleep(30)
+            exit()
         while True:
-            with urlopen('https://bittrex.com/api/v1.1/public/getmarketsummaries') as data:
-                rdata = json.loads(data.read().decode("utf-8"))
-            x = 0
-            while x < num:
-                if x == num:
-                    x = x - 1
-                for i in rdata['result']:
-                    if i['MarketName'] == 'BTC-{}'.format(n[x]):
-                        if float('{:f}'.format(i['Last'])) >= float(p[x]):
-                            notify = ('{:f}'.format(i['Last']) + " btc")
-                            os.system('notify-send ' + str(notify))
-                            os.system('spd-say "sell {}"'.format(n[x]))
-                        x = x + 1
-                        if x == num:
-                            break
+            try:
+                with urlopen('https://bittrex.com/api/v1.1/public/getmarketsummaries') as data:
+                    rdata = json.loads(data.read().decode("utf-8"))
+                x = 0
+                while x < num:
+                    if x == num:
+                        x = x - 1
+                    for i in rdata['result']:
+                        if i['MarketName'] == 'BTC-{}'.format(n[x]):
+                            if float('{:f}'.format(i['Last'])) >= float(p[x]):
+                                notify = ('{:f}'.format(i['Last']) + " btc")
+                                os.system('notify-send ' + str(notify))
+                                os.system('spd-say "sell {}"'.format(n[x]))
+                            x = x + 1
+                            if x == num:
+                                break
+            except:
+                os.system('notify-send ' + 'Error Connection')
+                os.system('spd-say "Error No Connection"')
             time.sleep(900)
 
 
 
 if __name__ == '__main__':
-# add path to your icon of choice here in the on '' 
-    on=''
+    try:
+        # add path to your icon of choice here in the on '' 
+    	on=''
+    except:
+        os.system('notify-send ' + 'no icon file')
     p = multiprocessing.Process(target=notifier)
     p.daemon = True
     p.start()
